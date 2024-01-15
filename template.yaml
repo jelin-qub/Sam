@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: My Basic Lambda Functions
+
+Resources:
+  MycsvLamb:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: sam_appli/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Timeout: 300
+
+
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MySqs.Arn
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref MyBucket
+            Events: s3:ObjectCreated:*
+
+
+
+  MyBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: csvbucketextract
+
+
+
+  MySqs:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+        QueueName: csvqueueextract
+
+
+
+
+
