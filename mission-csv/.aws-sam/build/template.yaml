@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: My Basic Lambda Functions
+Resources:
+  FirstLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: FirstLambda
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Timeout: 800
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - MySqs
+              - Arn
+        FileUpload:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: MyBucket
+            Events: s3:ObjectCreated:*
+      Policies:
+      - S3ReadPolicy:
+          BucketName: missioncsvbucket
+      Environment:
+        Variables:
+          SECOND_QUEUE_ARN:
+            Fn::GetAtt:
+            - MySecondSqs
+            - Arn
+          SECOND_QUEUE_URL:
+            Ref: MySecondSqs
+    Metadata:
+      SamResourceId: FirstLambda
+  SecondLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: SecondLambda
+      Handler: app.lambda_handler_second
+      Runtime: python3.9
+      Timeout: 800
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - MySecondSqs
+              - Arn
+      Environment:
+        Variables:
+          SECOND_QUEUE_URL:
+            Ref: MySecondSqs
+    Metadata:
+      SamResourceId: SecondLambda
+  MySqs:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: Queue_1
+      VisibilityTimeout: 800
+  MySecondSqs:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: Queue_2
+      VisibilityTimeout: 800
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: missioncsvbucket
