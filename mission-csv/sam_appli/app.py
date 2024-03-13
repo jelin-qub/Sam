@@ -6,10 +6,10 @@ import pandas as pd
 import os
 import io
 
+# this is change2
+# this is change1
 
-access_key="AKIAZI2LCKEBSPQVI2OB"
-secret_key="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"
-region="ap-south-1"
+
 def lambda_handler(event, context):
     print("Lambda function triggered!",event)
 
@@ -54,10 +54,7 @@ def lambda_handler(event, context):
 def parse_and_convert_to_dataframe(bucket, key):
     try:
         # Download the CSV file from S3
-        s3_client = boto3.client('s3',aws_access_key_id=access_key,
-                      aws_secret_access_key=secret_key,
-                      region_name=region
-                      )
+        s3_client = boto3.client('s3')
         response = s3_client.get_object(Bucket=bucket, Key=key)
         print("response", response)
 
@@ -103,7 +100,7 @@ def send_rows_to_second_sqs(df):
     queue_arn = os.environ['SECOND_QUEUE_ARN']
     queue_url = os.environ['SECOND_QUEUE_URL']
 
-    sqs = boto3.client('sqs', aws_access_key_id=access_key, aws_secret_access_key=secret_key, region_name=region)
+    sqs = boto3.client('sqs')
     print(queue_arn)
 
     for index, row in df.iterrows():
