@@ -7,12 +7,9 @@ import os
 import io
 
 
-access_key="AKIAZI2LCKEBSPQVI2OB"
-secret_key="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"
-region="ap-south-1"
-def lambda_handler(event, context):
-    print("Lambda function triggered!",event)
 
+    #change 1 
+    # change 2
 
     # Check if the event is from SQS
     if 'Records' in event and 'eventSource' in event['Records'][0] and event['Records'][0]['eventSource'] == 'aws:sqs':
