@@ -7,9 +7,8 @@ import os
 import io
 
 
-access_key="AKIAZI2LCKEBSPQVI2OB"
-secret_key="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"
-region="ap-south-1"
+# change 4
+
 def lambda_handler(event, context):
     print("Lambda function triggered!",event)
 
